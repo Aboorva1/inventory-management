@@ -5,6 +5,8 @@ class Invoice < ApplicationRecord
 
   before_save :calculate_total
   after_create :update_stock_levels
+  after_commit :check_stock_after_invoice, on: [:create, :update]
+
   enum status: { pending: 0, paid: 1, cancelled: 2 }
 
   private
@@ -16,6 +18,14 @@ class Invoice < ApplicationRecord
   def update_stock_levels
     products_to_invoice.each do |item|
       item.product.update(quantity: item.product.quantity - item.quantity)
+    end
+  end
+
+  def check_stock_after_invoice
+    low_stock_products = products.select { |product| product.quantity < 3 }
+
+    if low_stock_products.any?
+      StockMailer.low_stock_alert(low_stock_products).deliver_later
     end
   end
 end

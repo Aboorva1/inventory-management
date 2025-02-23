@@ -1,0 +1,10 @@
+<h2>Low Stock Alert</h2>
+<p>The following products are running low on stock:</p>
+
+<ul>
+  <% @products.each do |product| %>
+    <li><strong><%= product.name %></strong> - Stock: <%= product.quantity %></li>
+  <% end %>
+</ul>
+
+<p>Please restock them as soon as possible.</p>
