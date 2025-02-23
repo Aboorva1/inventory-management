@@ -1,42 +1,67 @@
-<%= form_with(model: invoice) do |form| %>
-  <% if invoice.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(invoice.errors.count, "error") %> prohibited this invoice from being saved:</h2>
+<%= javascript_include_tag 'invoice' %>
 
-      <ul>
-        <% invoice.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+<%= form_with(model: @invoice, class: "container mt-5 d-flex justify-content-center") do |f| %>
+  <div class="card shadow-sm p-4" style="width: 50rem;">
+    <div class="card-body">
+      <div class="row mb-3">
+        <label class="col-sm-4 col-form-label"><strong>Customer Name</strong></label>
+        <div class="col-sm-8">
+          <%= f.text_field :customer_name, class: "form-control", required: true %>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label class="col-sm-4 col-form-label"><strong>Customer Contact</strong></label>
+        <div class="col-sm-8">
+          <%= f.text_field :customer_contact, class: "form-control", required: true %>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label class="col-sm-4 col-form-label"><strong>Discount Price</strong></label>
+        <div class="col-sm-8">
+          <%= f.number_field :discount, class: "form-control", min: 0 %>
+        </div>
+      </div>
+
+      <h5 class="mb-3">Select Products:</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 10%;" class="text-center">✔</th>
+              <th style="width: 35%;">Product</th>
+              <th>Stock</th>
+              <th>Price</th>
+              <th style="width: 20%;">Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @products.each do |product| %>
+              <tr>
+                <td class="text-center">
+                  <%= check_box_tag "invoice[products_to_invoice_attributes][][product_id]", product.id, false, class: "product-checkbox", data: { target: "quantity-#{product.id}" } %>
+                </td>
+                <td><%= product.name %></td>
+                <td><%= product.quantity %></td>
+                <td><%= product.price %></td>
+                <td>
+                  <input type="number" name="invoice[products_to_invoice_attributes][][quantity]" min="1" value="1" class="form-control quantity-field" id="quantity-<%= product.id %>" disabled>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
-  <% end %>
+    <div class="row mt-4">
+      <div class="col-6">
+        <%= link_to 'Back', invoices_path, class: "btn btn-secondary" %>
+      </div>
 
-  <div>
-    <%= form.label :customer_name, style: "display: block" %>
-    <%= form.text_field :customer_name %>
-  </div>
-
-  <div>
-    <%= form.label :customer_contact, style: "display: block" %>
-    <%= form.text_field :customer_contact %>
-  </div>
-
-  <div>
-    <%= form.label :total, style: "display: block" %>
-    <%= form.text_field :total %>
-  </div>
-
-  <div>
-    <%= form.label :discount, style: "display: block" %>
-    <%= form.text_field :discount %>
-  </div>
-
-  <div>
-    <%= form.label :status, style: "display: block" %>
-    <%= form.number_field :status %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+      <div class="col-6 text-end">
+        <%= f.submit 'Save', class: "btn btn-success" %>
+      </div>
+    </div>
   </div>
 <% end %>

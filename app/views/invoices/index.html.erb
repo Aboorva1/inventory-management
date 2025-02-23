@@ -1,14 +1,43 @@
-<p style="color: green"><%= notice %></p>
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow-sm" style="width: 70rem;">
+    <div class="card-header bg-dark text-white">
+      <h5 class="mb-0">Invoices</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="w-50">Customer Name</th>  <!-- Wider column -->
+              <th class="text-center w-10">Total Price</th>
+              <th class="text-center w-15">Status</th>
+              <th class="text-center w-25">Actions</th>
+            </tr>
 
-<h1>Invoices</h1>
-
-<div id="invoices">
-  <% @invoices.each do |invoice| %>
-    <%= render invoice %>
-    <p>
-      <%= link_to "Show this invoice", invoice %>
-    </p>
-  <% end %>
+          </thead>
+          <tbody>
+            <% @invoices.each do |invoice| %>
+              <tr>
+                <td><%= invoice.customer_name %></td>
+                <td class="text-center"><%= invoice.total %></td>
+                <td class="text-center">
+                  <span class="badge 
+                    <%= invoice.pending? ? 'bg-warning' : invoice.paid? ? 'bg-success' : 'bg-danger' %>">
+                    <%= invoice.status.capitalize %>
+                  </span>
+                </td>
+                <td>
+                  <%= link_to "View", invoice_path(invoice), class: "btn btn-sm btn-info", form: { class: "d-inline" } %>
+                  <% if invoice.pending? %>
+                    <%= button_to "Mark as Paid", mark_as_paid_invoice_path(invoice), class: "btn btn-sm btn-success", form: { class: "d-inline" }%>
+                    <%= button_to "Cancel", cancel_invoice_path(invoice), class: "btn btn-danger btn-sm", form: { class: "d-inline" } %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
-
-<%= link_to "New invoice", new_invoice_path %>

@@ -1,53 +1,60 @@
 class InvoicesController < ApplicationController
-  before_action :set_invoice, only: %i[ show edit update destroy ]
+  before_action :set_invoice, only: %i[edit update destroy mark_as_paid]
 
-  # GET /invoices or /invoices.json
   def index
-    @invoices = Invoice.all
+    @invoices = Invoice.order("created_at DESC")
   end
 
-  # GET /invoices/1 or /invoices/1.json
   def show
+    @invoice = Invoice.includes(products_to_invoice: :product).find(params[:id])
   end
 
-  # GET /invoices/new
   def new
     @invoice = Invoice.new
+    @products = Product.where("quantity >= ?", 3)
   end
 
-  # GET /invoices/1/edit
   def edit
   end
 
-  # POST /invoices or /invoices.json
   def create
     @invoice = Invoice.new(invoice_params)
+    @invoice.status ||= :pending
 
     respond_to do |format|
       if @invoice.save
-        format.html { redirect_to @invoice, notice: "Invoice was successfully created." }
-        format.json { render :show, status: :created, location: @invoice }
+        format.html { redirect_to invoices_path, notice: "Invoice was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @invoice.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  # PATCH/PUT /invoices/1 or /invoices/1.json
   def update
     respond_to do |format|
       if @invoice.update(invoice_params)
         format.html { redirect_to @invoice, notice: "Invoice was successfully updated." }
-        format.json { render :show, status: :ok, location: @invoice }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @invoice.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /invoices/1 or /invoices/1.json
+  def mark_as_paid
+    @invoice.update(status: "paid")
+    redirect_to invoices_path, notice: "Invoice marked as paid."
+  end
+  
+  def cancel
+    @invoice = Invoice.includes(products_to_invoice: :product).find(params[:id])
+    @invoice.update(status: "cancelled")
+    @invoice.products_to_invoice.each do |item|
+      item.product.update(quantity: item.product.quantity + item.quantity)
+    end
+    redirect_to invoices_path, notice: "Invoice cancelled."
+  end  
+  
+
   def destroy
     @invoice.destroy!
 
@@ -58,13 +65,12 @@ class InvoicesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_invoice
       @invoice = Invoice.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def invoice_params
-      params.require(:invoice).permit(:customer_name, :customer_contact, :total, :discount, :status)
+      params.require(:invoice).permit(:customer_name, :customer_contact, :discount, :status,
+      products_to_invoice_attributes: [:product_id, :quantity])
     end
 end

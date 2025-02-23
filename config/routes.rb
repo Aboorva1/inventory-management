@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  resources :invoices
+  resources :invoices do
+    member do
+      post :mark_as_paid
+      post :cancel
+    end
+  end
   resources :products
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
