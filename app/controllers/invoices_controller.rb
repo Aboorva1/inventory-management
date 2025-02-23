@@ -11,7 +11,7 @@ class InvoicesController < ApplicationController
 
   def new
     @invoice = Invoice.new
-    @products = Product.where("quantity >= ?", 3)
+    @products = Product.where("quantity >= ?", 2).active
   end
 
   def edit

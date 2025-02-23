@@ -17,25 +17,30 @@
 
   <% if @total_sales.present? %>
     <div class="mt-4">
-      <h4>Total Sales: <%= number_to_currency(@total_sales) %></h4>
+      <h4>Total Sales: <%= @total_sales %></h4>
     </div>
-
-    <h4 class="mt-3">Most Sold Products</h4>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Product Name</th>
-          <th class="text-center">Quantity Sold</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @most_sold_products.each do |product_name, quantity| %>
+    <% if @most_sold_products.present? %>
+      <h4 class="mt-3">Most Sold Products</h4>
+      <table class="table table-striped">
+        <thead>
           <tr>
-            <td><%= product_name %></td>
-            <td class="text-center"><%= quantity %></td>
+            <th>Product Name</th>
+            <th class="text-center">Quantity Sold</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @most_sold_products.each do |product_name, quantity| %>
+            <tr>
+              <td><%= product_name %></td>
+              <td class="text-center"><%= quantity %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="alert alert-warning text-center mt-4" style="max-width: 50%; margin: auto;">
+        No sales data found for the selected date range.
+      </div>
+    <% end %>
   <% end %>
 </div>
