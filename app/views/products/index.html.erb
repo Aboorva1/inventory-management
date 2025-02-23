@@ -1,14 +1,43 @@
-<p style="color: green"><%= notice %></p>
+<div class="container mt-4">
+  <div class="card shadow-lg">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold text-secondary">Products</h4>
+        <%= link_to new_product_path, class: "btn btn-success" do %>
+          <i class="bi bi-plus-circle"></i> Add Product
+        <% end %>
+      </div>
 
-<h1>Products</h1>
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @products.each_with_index do |product, index| %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= product.name %></td>
+              <td><%= product.quantity %></td>
+              <td><%= product.price %></td>
+              <td class="text-center">
+                <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-warning me-2" do %>
+                  <i class="bi bi-pencil-square"></i>
+                <% end %>
 
-<div id="products">
-  <% @products.each do |product| %>
-    <%= render product %>
-    <p>
-      <%= link_to "Show this product", product %>
-    </p>
-  <% end %>
+                <%= button_to product_url(product), method: :delete, data: { confirm: "Are you sure?" }, form: { class: "d-inline" }, class: "btn btn-sm btn-outline-danger" do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
-
-<%= link_to "New product", new_product_path %>

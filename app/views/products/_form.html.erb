@@ -1,32 +1,38 @@
-<%= form_with(model: product) do |form| %>
-  <% if product.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h4 class="card-title text-center mb-4"><%= product.new_record? ? "Add Product" : "Edit Product" %></h4>
+          
+          <%= form_with(model: product, local: true, class: "needs-validation") do |form| %>
+            <div class="mb-3">
+              <%= form.label :name, class: "form-label" %>
+              <%= form.text_field :name, class: "form-control", required: true %>
+            </div>
 
-      <ul>
-        <% product.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+            <div class="mb-3">
+              <%= form.label :price, class: "form-label" %>
+              <%= form.text_field :price, class: "form-control", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :quantity, class: "form-label" %>
+              <%= form.number_field :quantity, class: "form-control", required: true, min: 1, step: 1%>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-6">
+                <%= link_to 'Back', products_path, class: "btn btn-secondary" %>
+              </div>
+
+              <div class="col-6 text-end">
+                <%= form.submit 'Save', class: "btn btn-success" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
   </div>
-
-  <div>
-    <%= form.label :price, style: "display: block" %>
-    <%= form.text_field :price %>
-  </div>
-
-  <div>
-    <%= form.label :quantity, style: "display: block" %>
-    <%= form.number_field :quantity %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+</div>
